@@ -15,20 +15,21 @@
 
 **Kusto Query Language (KQL)** is a read-only query language developed by Microsoft for querying large datasets in near real-time. It is the primary language used in:
 
-- **Azure Data Explorer (ADX)** — Microsoft's big data analytics service
-- **Microsoft Sentinel** — cloud-native SIEM for security analytics
-- **Azure Monitor / Log Analytics** — infrastructure and application telemetry
-- **Microsoft Defender** — threat hunting and security investigations
+- **[Azure Data Explorer (ADX)](https://azure.microsoft.com/en-us/products/data-explorer/)** — Microsoft's big data analytics service
+- **[Microsoft Sentinel](https://azure.microsoft.com/en-us/products/microsoft-sentinel/)** — cloud-native SIEM for security analytics
+- **[Azure Monitor / Log Analytics](https://azure.microsoft.com/en-us/products/monitor/)** — infrastructure and application telemetry
+
 
 KQL is designed for **telemetry, logs, time-series data, and observability** — querying billions of rows of machine-generated data in seconds.
 
 This repository contains an interactive Jupyter notebook that teaches **KQL and SQL side-by-side** using a synthetic NYC Taxi dataset. KQL runs natively on Azure Data Explorer and Microsoft Sentinel; the notebook simulates KQL's pipeline syntax with Pandas method-chaining and executes real SQL via **DuckDB**.
 
-## Notebook
+## Tutorial
 
 | File | Description |
 |------|-------------|
 | [`kql_sql_nyc_taxi_tutorial.ipynb`](kql_sql_nyc_taxi_tutorial.ipynb) | Full hands-on tutorial — 16 sections with side-by-side KQL and SQL examples |
+| [`kql_sql_nyc_taxi_tutorial.html`](kql_sql_nyc_taxi_tutorial.html) | Static HTML export — open in any browser (no Jupyter required) |
 
 ## Table of Contents
 
