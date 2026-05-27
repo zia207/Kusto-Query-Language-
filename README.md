@@ -12,6 +12,9 @@
   <a href="https://zia207.github.io/Kusto-Query-Language-/kql_linkedin_post.html"><strong>LinkedIn article →</strong></a>
 </p>
 
+> **Note:** The live site URL ends with a trailing hyphen: `Kusto-Query-Language-/`  
+> Using `Kusto-Query-Language/` (without `-`) will return a 404.
+
 ---
 
 ## Overview
