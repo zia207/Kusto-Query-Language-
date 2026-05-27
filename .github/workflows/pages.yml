@@ -7,6 +7,9 @@ on:
       - '.github/workflows/index.html'
       - '.github/workflows/pages.yml'
       - 'upatta_logo.png'
+      - 'KQL.png'
+      - 'kql_linkedin_post.html'
+      - 'kql_sql_nyc_taxi_tutorial.html'
   workflow_dispatch:
 
 permissions:
@@ -32,7 +35,10 @@ jobs:
         run: |
           mkdir -p _site
           cp .github/workflows/index.html _site/index.html
+          cp .github/workflows/index.html _site/kql_sql_nyc_taxi_tutorial.html
+          cp kql_linkedin_post.html _site/
           cp upatta_logo.png _site/
+          cp KQL.png _site/
           touch _site/.nojekyll
 
       - name: Upload artifact
