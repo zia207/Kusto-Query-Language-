@@ -328,9 +328,32 @@
     .sections-list { grid-template-columns: 1fr; }
     h1 { font-size: 2rem; }
   }
+
+  #site-nav {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 1000;
+  }
+  #site-nav a {
+    display: inline-block;
+    padding: 6px 12px;
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    color: var(--azure);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  }
+  #site-nav a:hover { background: var(--azure-light); }
 </style>
 </head>
 <body>
+<nav id="site-nav">
+  <a href="index.html">← KQL Tutorial</a>
+</nav>
 <div class="page">
 
   <div class="platform-bar">

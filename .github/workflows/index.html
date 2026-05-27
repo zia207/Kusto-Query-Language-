@@ -7816,12 +7816,39 @@ a.anchor-link {
     position: absolute;
   }
 }
+#site-nav {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 9999;
+  display: flex;
+  gap: 8px;
+}
+#site-nav a {
+  display: inline-block;
+  padding: 6px 12px;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  color: #0A66C2;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+#site-nav a:hover {
+  background: #EBF3FB;
+}
 </style>
 </head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <div id="upatta-logo">
   <img src="upatta_logo.png" alt="Upatta Data Analytics"/>
 </div>
+<nav id="site-nav">
+  <a href="kql_linkedin_post.html">LinkedIn Article</a>
+</nav>
 <main>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=5a60684b">
 <div class="jp-Cell-inputWrapper" tabindex="0">

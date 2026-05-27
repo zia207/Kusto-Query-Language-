@@ -8,7 +8,8 @@
 <p align="center">
   <strong>A comprehensive KQL vs SQL tutorial with NYC Taxi data</strong><br/>
   Author: <strong>Zia Ahmed</strong> · <strong>Upatta Analytics</strong><br/>
-  <a href="https://zia207.github.io/Kusto-Query-Language-/"><strong>View live tutorial →</strong></a>
+  <a href="https://zia207.github.io/Kusto-Query-Language-/"><strong>View live tutorial →</strong></a> ·
+  <a href="https://zia207.github.io/Kusto-Query-Language-/kql_linkedin_post.html"><strong>LinkedIn article →</strong></a>
 </p>
 
 ---
@@ -31,6 +32,8 @@ This repository contains an interactive Jupyter notebook that teaches **KQL and 
 | File | Description |
 |------|-------------|
 | [**Live GitHub Pages site**](https://zia207.github.io/Kusto-Query-Language-/) | Interactive tutorial in your browser — no setup required |
+| [**LinkedIn article (live)**](https://zia207.github.io/Kusto-Query-Language-/kql_linkedin_post.html) | Why every data pro should learn KQL — blog-style article |
+| [`kql_linkedin_post.html`](kql_linkedin_post.html) | LinkedIn article source HTML |
 | [`.github/workflows/index.html`](.github/workflows/index.html) | GitHub Pages site source — deployed tutorial HTML |
 | [`kql_sql_nyc_taxi_tutorial.ipynb`](kql_sql_nyc_taxi_tutorial.ipynb) | Full hands-on tutorial — 16 sections with side-by-side KQL and SQL examples |
 | [`kql_sql_nyc_taxi_tutorial.html`](kql_sql_nyc_taxi_tutorial.html) | Static HTML export — open locally in any browser |
