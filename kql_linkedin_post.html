@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KQL vs SQL — LinkedIn Blog Post</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FAF8F3;
+    --ink: #1A1814;
+    --ink-mid: #4A4740;
+    --ink-light: #8A8780;
+    --azure: #0A66C2;
+    --azure-light: #EBF3FB;
+    --azure-mid: #C8E0F4;
+    --teal: #0E7C69;
+    --teal-light: #E2F5F1;
+    --gold: #B87F18;
+    --gold-light: #FDF4E0;
+    --rule: #E0DDD5;
+    --code-bg: #F0EDE6;
+  }
+
+  body {
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 2rem 6rem;
+  }
+
+  /* Header */
+  .platform-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 3rem;
+  }
+  .li-logo {
+    width: 28px; height: 28px;
+    background: var(--azure);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 16px; letter-spacing: -1px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .platform-label {
+    font-size: 13px;
+    color: var(--ink-light);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* Hero */
+  .hero {
+    border-top: 3px solid var(--ink);
+    padding-top: 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .tag-row {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.25rem;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 3px;
+  }
+  .tag-azure { background: var(--azure-light); color: var(--azure); }
+  .tag-teal  { background: var(--teal-light);  color: var(--teal);  }
+  .tag-gold  { background: var(--gold-light);  color: var(--gold);  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.12;
+    color: var(--ink);
+    margin-bottom: 1rem;
+  }
+  h1 em { font-style: italic; color: var(--azure); }
+
+  .deck {
+    font-size: 1.15rem;
+    line-height: 1.65;
+    color: var(--ink-mid);
+    font-weight: 300;
+    max-width: 580px;
+    margin-bottom: 1.75rem;
+  }
+
+  .author-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 1rem 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--azure);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 600; font-size: 14px;
+    flex-shrink: 0;
+  }
+  .author-info p { font-size: 14px; line-height: 1.4; }
+  .author-name { font-weight: 600; color: var(--ink); }
+  .author-meta { color: var(--ink-light); font-size: 13px; margin-top: 1px; }
+
+  /* Body */
+  .body { margin-top: 2.5rem; }
+
+  p.lead {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+  }
+
+  p.body-text {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--ink-mid);
+    margin-bottom: 1.25rem;
+  }
+
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    color: var(--ink);
+    margin: 2.5rem 0 0.85rem;
+    line-height: 1.2;
+  }
+
+  /* Pull quote */
+  .pull-quote {
+    margin: 2rem 0;
+    padding: 1.5rem 1.75rem;
+    border-left: 4px solid var(--azure);
+    background: var(--azure-light);
+    border-radius: 0 8px 8px 0;
+  }
+  .pull-quote p {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: var(--ink);
+    font-style: italic;
+  }
+
+  /* Code comparison */
+  .code-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1.75rem 0;
+    border: 1px solid var(--rule);
+  }
+  .code-panel {
+    background: var(--cream);
+    padding: 0;
+  }
+  .code-header {
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .code-header.sql { background: #F0EDE6; color: var(--ink-mid); border-bottom: 1px solid var(--rule); }
+  .code-header.kql { background: var(--azure-light); color: var(--azure); border-bottom: 1px solid var(--azure-mid); }
+  .code-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-sql { background: var(--ink-light); }
+  .dot-kql { background: var(--azure); }
+  pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    padding: 1rem 1.25rem;
+    color: var(--ink);
+    white-space: pre-wrap;
+  }
+  .kw { color: var(--azure); font-weight: 500; }
+  .fn { color: var(--teal); }
+  .cm { color: var(--ink-light); font-style: italic; }
+  .st { color: var(--gold); }
+
+  /* Feature cards */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin: 1.75rem 0;
+  }
+  .feat {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 1.1rem 1.1rem 1rem;
+  }
+  .feat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .feat-title { font-weight: 600; font-size: 14px; color: var(--ink); margin-bottom: 4px; }
+  .feat-desc  { font-size: 13px; color: var(--ink-light); line-height: 1.5; }
+
+  /* Sections list */
+  .sections-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 20px;
+    margin: 1rem 0 1.5rem;
+    padding: 0;
+    list-style: none;
+  }
+  .sections-list li {
+    font-size: 14px;
+    color: var(--ink-mid);
+    padding: 5px 0 5px 16px;
+    position: relative;
+    border-bottom: 1px solid var(--rule);
+    line-height: 1.4;
+  }
+  .sections-list li::before {
+    content: counter(li-counter);
+    counter-increment: li-counter;
+    position: absolute; left: 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--azure);
+    top: 6px;
+  }
+  .sections-list { counter-reset: li-counter; }
+
+  /* CTA */
+  .cta-block {
+    margin: 2.5rem 0 1rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #042C53 0%, #185FA5 100%);
+    border-radius: 12px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-block::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    border: 30px solid rgba(255,255,255,0.06);
+  }
+  .cta-block h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
+  }
+  .cta-block p { font-size: 14px; opacity: 0.82; line-height: 1.6; margin-bottom: 1.25rem; }
+  .cta-links { display: flex; flex-direction: column; gap: 10px; }
+  .cta-link {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.15s;
+  }
+  .cta-link:hover { background: rgba(255,255,255,0.2); }
+  .cta-link .url-text { opacity: 0.65; font-size: 11px; font-family: 'JetBrains Mono', monospace; word-break: break-all; }
+  .cta-link .arrow { margin-left: auto; opacity: 0.7; font-size: 16px; }
+
+  /* Hashtags */
+  .hashtags {
+    margin-top: 2.5rem;
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .hashtag {
+    font-size: 14px;
+    color: var(--azure);
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .hashtag:hover { text-decoration: underline; }
+
+  /* Engagement bar */
+  .engage-bar {
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    display: flex; gap: 1.5rem; align-items: center;
+  }
+  .engage-btn {
+    background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--ink-light);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    padding: 6px 0;
+    transition: color 0.15s;
+  }
+  .engage-btn:hover { color: var(--azure); }
+  .engage-btn svg { width: 18px; height: 18px; }
+
+  @media (max-width: 560px) {
+    .code-compare { grid-template-columns: 1fr; }
+    .sections-list { grid-template-columns: 1fr; }
+    h1 { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="platform-bar">
+    <div class="li-logo">in</div>
+    <span class="platform-label">LinkedIn Article</span>
+  </div>
+
+  <article>
+    <header class="hero">
+      <div class="tag-row">
+        <span class="tag tag-azure">Data Engineering</span>
+        <span class="tag tag-teal">Azure</span>
+        <span class="tag tag-gold">Tutorial</span>
+      </div>
+
+      <h1>Why Every Data Pro Should Learn <em>KQL</em> in 2025</h1>
+
+      <p class="deck">
+        Microsoft's Kusto Query Language is quietly becoming the go-to tool for log analytics, cloud security, and time-series data at scale — and it's far more approachable than you think.
+      </p>
+
+      <div class="author-row">
+        <div class="avatar">ZA</div>
+        <div class="author-info">
+          <p class="author-name">Zia Ahmed</p>
+          <p class="author-meta">Upatta Analytics · Data & Cloud Solutions · 5 min read</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="body">
+
+      <p class="lead">
+        If you've ever opened Microsoft Sentinel, poked around Azure Monitor, or worked in Azure Data Explorer — you've encountered KQL. But most SQL practitioners glance at the unfamiliar pipe syntax and quietly close the tab.
+      </p>
+
+      <p class="body-text">
+        That's a mistake worth correcting. KQL isn't a replacement for SQL — it's a different tool for a different problem. And once it clicks, querying billions of log rows feels almost effortless. I put together a hands-on tutorial that teaches both languages <em>side-by-side</em>, using a dataset everyone can relate to: NYC Taxi trips.
+      </p>
+
+      <div class="pull-quote">
+        <p>"SQL describes the result you want. KQL describes the transformations you want to apply. Neither is wrong — they just reflect different mental models."</p>
+      </div>
+
+      <h2>The pipeline mental model</h2>
+
+      <p class="body-text">
+        The biggest conceptual shift when moving from SQL to KQL is reading left-to-right instead of jumping between SELECT, FROM, WHERE, and GROUP BY. In KQL, you start with a table and pipe it through a series of transformations. Each step is explicit and readable.
+      </p>
+
+      <div class="code-compare">
+        <div class="code-panel">
+          <div class="code-header sql">
+            <span class="code-dot dot-sql"></span> SQL
+          </div>
+          <pre><span class="kw">SELECT</span> pickup_borough,
+       <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total_trips,
+       <span class="fn">AVG</span>(fare_amount) <span class="kw">AS</span> avg_fare
+<span class="kw">FROM</span>   nyc_taxi
+<span class="kw">WHERE</span>  trip_distance &gt; 2
+  <span class="kw">AND</span>  payment_type = <span class="st">'Credit Card'</span>
+<span class="kw">GROUP  BY</span> pickup_borough
+<span class="kw">ORDER  BY</span> total_trips <span class="kw">DESC</span>
+<span class="kw">LIMIT</span>  5;</pre>
+        </div>
+        <div class="code-panel">
+          <div class="code-header kql">
+            <span class="code-dot dot-kql"></span> KQL
+          </div>
+          <pre>nyc_taxi
+<span class="kw">| where</span> trip_distance <span class="fn">&gt;</span> 2
+<span class="kw">| where</span> payment_type <span class="fn">==</span> <span class="st">"Credit Card"</span>
+<span class="kw">| summarize</span>
+    total_trips = <span class="fn">count</span>(),
+    avg_fare    = <span class="fn">avg</span>(fare_amount)
+  <span class="kw">by</span> pickup_borough
+<span class="kw">| order by</span> total_trips <span class="fn">desc</span>
+<span class="kw">| take</span> 5</pre>
+        </div>
+      </div>
+
+      <p class="body-text">
+        Both queries return identical results. But notice how the KQL version reads top-to-bottom like a recipe: start here, apply this filter, then this one, then summarize, then sort, then take the top five. There are no clause-order surprises.
+      </p>
+
+      <h2>What makes KQL powerful for modern data work</h2>
+
+      <div class="feature-grid">
+        <div class="feat">
+          <span class="feat-icon">⚡</span>
+          <div class="feat-title">Built for scale</div>
+          <div class="feat-desc">Designed to query billions of telemetry rows in seconds on Azure Data Explorer.</div>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">🕐</span>
+          <div class="feat-title">Time-series native</div>
+          <div class="feat-desc"><code>ago()</code>, <code>bin()</code>, <code>startofday()</code> — first-class time functions, no dialect hacks.</div>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">🔍</span>
+          <div class="feat-title">Security analytics</div>
+          <div class="feat-desc">The primary language for Microsoft Sentinel threat hunting and incident investigation.</div>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">📊</span>
+          <div class="feat-title">render built in</div>
+          <div class="feat-desc">Pipe any query to <code>| render timechart</code> and get a visual instantly.</div>
+        </div>
+      </div>
+
+      <h2>What the tutorial covers</h2>
+
+      <p class="body-text">
+        The full notebook walks through 16 sections with side-by-side KQL and SQL examples on a synthetic dataset of 5,000 NYC taxi trips — the kind of real-world, messy, time-stamped data you actually encounter in practice.
+      </p>
+
+      <ul class="sections-list">
+        <li>Setup &amp; dependencies</li>
+        <li>Dataset generation</li>
+        <li>Language philosophy</li>
+        <li>Basic filtering</li>
+        <li>Column selection</li>
+        <li>Derived columns</li>
+        <li>Aggregation</li>
+        <li>Sorting &amp; limiting</li>
+        <li>String operations</li>
+        <li>Date/time operations</li>
+        <li>Joins (6 kinds in KQL)</li>
+        <li>Subqueries vs <code>let</code></li>
+        <li>Window functions</li>
+        <li>NULL handling</li>
+        <li>Multi-step analytics</li>
+        <li>Performance cheat sheet</li>
+      </ul>
+
+      <p class="body-text">
+        KQL runs natively on Azure Data Explorer and Microsoft Sentinel. In the notebook, I simulate KQL's pipeline syntax using Pandas method-chaining and run real SQL via DuckDB — so you can run everything locally with zero Azure setup required.
+      </p>
+
+      <h2>Who this is for</h2>
+
+      <p class="body-text">
+        If you're a data analyst, data engineer, or security professional who already knows SQL and wants to get productive in KQL without starting from scratch — this tutorial is designed for you. Every concept is introduced with a SQL anchor so you're never lost.
+      </p>
+
+      <p class="body-text">
+        And if you're building on the Microsoft stack — Azure Monitor, Log Analytics, Microsoft Defender, or Sentinel — KQL isn't optional. It's the language of the platform.
+      </p>
+
+      <div class="cta-block">
+        <h3>Explore the full tutorial</h3>
+        <p>No Azure account needed. Open the interactive site in your browser or download the Jupyter notebook and run it locally.</p>
+        <div class="cta-links">
+          <a class="cta-link" href="https://zia207.github.io/Kusto-Query-Language-/" target="_blank">
+            <div>
+              <div>🌐 Interactive KQL Tutorial</div>
+              <div class="url-text">zia207.github.io/Kusto-Query-Language-/</div>
+            </div>
+            <span class="arrow">↗</span>
+          </a>
+          <a class="cta-link" href="https://zia207.github.io/Kusto-Query-Language-/kql_sql_nyc_taxi_tutorial.html" target="_blank">
+            <div>
+              <div>🚕 KQL vs SQL — NYC Taxi Tutorial</div>
+              <div class="url-text">zia207.github.io/Kusto-Query-Language-/kql_sql_nyc_taxi_tutorial.html</div>
+            </div>
+            <span class="arrow">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <p class="body-text">
+        Drop a comment if you find it useful, or share with a colleague who's been curious about the Azure analytics stack. Happy querying. 🚀
+      </p>
+
+      <div class="hashtags">
+        <span class="hashtag">#KQL</span>
+        <span class="hashtag">#SQL</span>
+        <span class="hashtag">#AzureDataExplorer</span>
+        <span class="hashtag">#DataEngineering</span>
+        <span class="hashtag">#MicrosoftSentinel</span>
+        <span class="hashtag">#DataAnalytics</span>
+        <span class="hashtag">#CloudComputing</span>
+        <span class="hashtag">#Python</span>
+        <span class="hashtag">#OpenSource</span>
+      </div>
+
+      <div class="engage-bar">
+        <button class="engage-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+          Like
+        </button>
+        <button class="engage-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Comment
+        </button>
+        <button class="engage-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Repost
+        </button>
+        <button class="engage-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          Send
+        </button>
+      </div>
+
+    </div>
+  </article>
+
+</div>
+</body>
+</html>

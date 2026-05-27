@@ -2,6 +2,10 @@
   <img src="upatta_logo.png" alt="Upatta Data Analytics" width="220"/>
 </p>
 
+<p align="center">
+  <img src="KQL.png" alt="Why Every Data Pro Should Learn KQL" width="200"/>
+</p>
+
 <h1 align="center">Kusto Query Language (KQL)</h1>
 
 <p align="center">
